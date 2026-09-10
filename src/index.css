@@ -1,0 +1,289 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #050505;
+  color: #cec8b8;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: #ffffff;
+  color: #050505;
+}
+
+/* Grime au niveau de la page : grain fin + vignette, tout fixe.
+   Pas de lignes de balayage (elles gênaient la lecture). Réglages :
+   l'opacité de ::before pour la dose de grain, l'alpha de ::after pour
+   l'assombrissement des bords. */
+.grain {
+  position: relative;
+  isolation: isolate;
+}
+
+.grain::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0.07;
+  mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.62' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.grain::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 51;
+  pointer-events: none;
+  background: radial-gradient(140% 125% at 50% 36%, transparent 48%, rgba(0, 0, 0, 0.45) 100%);
+}
+
+/* Portraits d'artistes : traités en noir & blanc contrasté et assombris pour
+   unifier des sources très disparates. Réchauffés au survol / focus de la case. */
+.artist-portrait {
+  filter: grayscale(1) contrast(1.12) brightness(0.6);
+  transition: filter 200ms ease;
+}
+
+.group:hover .artist-portrait,
+.group:focus-visible .artist-portrait {
+  filter: grayscale(0.12) contrast(1.05) brightness(0.92);
+}
+
+/* Visible keyboard focus, kept consistent across custom interactive elements */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.45);
+}
+
+/* Plus aucun rouge sur le site : les anciens accents rouges deviennent du blanc
+   lumineux. `.glow-accent` = petit label qui "s'allume" ; `.glow-dot` = puce /
+   pastille lumineuse (l'indicateur "en écoute"). */
+.glow-accent {
+  color: #fff;
+  text-shadow:
+    0 0 3px rgba(255, 255, 255, 0.85),
+    0 0 14px rgba(255, 255, 255, 0.5),
+    0 0 30px rgba(255, 255, 255, 0.26);
+}
+
+.glow-dot {
+  background: #fff;
+  box-shadow:
+    0 0 5px rgba(255, 255, 255, 0.95),
+    0 0 14px rgba(255, 255, 255, 0.55),
+    0 0 26px rgba(255, 255, 255, 0.3);
+}
+
+/* Survol des liens : le lien s'allume — blanc + halo. `.hover-glow` marche en
+   direct (:hover / :focus-visible) ou piloté par un parent `.group` (lignes de
+   la liste des sons, cases artistes). Sur un lien bordé, la bordure passe
+   blanche. */
+.hover-glow {
+  transition:
+    color 150ms ease,
+    text-shadow 150ms ease,
+    border-color 150ms ease;
+}
+
+.hover-glow:hover,
+.hover-glow:focus-visible,
+.group:hover .hover-glow,
+.group:focus-visible .hover-glow {
+  color: #fff;
+  border-color: currentColor;
+  text-shadow:
+    0 0 2px rgba(255, 255, 255, 0.9),
+    0 0 11px rgba(255, 255, 255, 0.55),
+    0 0 24px rgba(255, 255, 255, 0.32);
+}
+
+/* Nom / alias sur une case artiste : ombre sombre au repos pour rester lisible
+   par-dessus la photo, remplacée par le halo blanc au survol de la case. */
+.tile-label {
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
+  transition:
+    color 150ms ease,
+    text-shadow 150ms ease;
+}
+
+.group:hover .tile-label,
+.group:focus-visible .tile-label {
+  color: #fff;
+  text-shadow:
+    0 0 3px rgba(255, 255, 255, 0.9),
+    0 0 14px rgba(255, 255, 255, 0.55),
+    0 0 30px rgba(255, 255, 255, 0.32);
+}
+
+/* Micro-glitch du logo : immobile ~7,4 s puis courte secousse saccadée.
+   Coupé net par le bloc prefers-reduced-motion ci-dessous ; l'inclinaison
+   de base reste portée par le style inline du wordmark. */
+@keyframes wora-logo-glitch {
+  0%,
+  93%,
+  100% {
+    transform: skewX(-3deg) translate3d(0, 0, 0);
+  }
+  94% {
+    transform: skewX(-3deg) translate3d(-3px, 1px, 0) skewX(3deg);
+  }
+  95% {
+    transform: skewX(-3deg) translate3d(3px, -2px, 0);
+  }
+  96% {
+    transform: skewX(-3deg) translate3d(-2px, 0, 0) skewX(-2deg);
+  }
+  97% {
+    transform: skewX(-3deg) translate3d(2px, 2px, 0);
+  }
+  98% {
+    transform: skewX(-3deg) translate3d(-1px, -1px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  * {
+    animation-duration: 0.01ms !important;
+    animation-delay: -1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}
+
+/* Écran "sélection de personnage" de la section Artistes.
+   Ces animations se réduisent à leur état final via le bloc prefers-reduced-motion
+   ci-dessus (durée quasi nulle + delay négatif), donc rien ne clignote. */
+@keyframes wora-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes wora-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Fermeture du panneau artiste : on l'écrase verticalement en un trait (avec un
+   court soubresaut, façon glitch), puis le trait s'étire et se disperse sur le
+   côté en se dissolvant. transform-origin par défaut = centre. */
+@keyframes wora-crush-out {
+  0% {
+    transform: scaleX(1) scaleY(1);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.55, 0, 0.9, 0.25);
+  }
+  26% {
+    transform: scaleX(1.06) scaleY(0.03);
+    opacity: 1;
+    animation-timing-function: steps(2, jump-end);
+  }
+  38% {
+    transform: scaleX(0.97) scaleY(0.03);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.36, 0, 0.66, 1);
+  }
+  100% {
+    transform: translateX(34%) skewX(-20deg) scaleX(2.4) scaleY(0.008);
+    opacity: 0;
+  }
+}
+
+@keyframes wora-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Court glitch quand le lecteur "en écoute" passe au morceau suivant :
+   bandes blanches qui sautent en travers puis s'effacent (~320 ms). */
+@keyframes wora-track-glitch {
+  0% { opacity: 1; clip-path: inset(0 0 66% 0); transform: translate3d(-8%, 0, 0); }
+  20% { opacity: 1; clip-path: inset(50% 0 22% 0); transform: translate3d(7%, 0, 0); }
+  38% { opacity: 0.9; clip-path: inset(76% 0 6% 0); transform: translate3d(-5%, 0, 0); }
+  58% { opacity: 0.6; clip-path: inset(24% 0 52% 0); transform: translate3d(6%, 0, 0); }
+  78% { opacity: 0.38; clip-path: inset(8% 0 80% 0); transform: translate3d(-3%, 0, 0); }
+  100% { opacity: 0; clip-path: inset(0 0 100% 0); transform: translate3d(0, 0, 0); }
+}
+
+/* --- "Crash" glitch noir & blanc du reveal (ArtistReveal) ---
+   Effet volontairement court (~0,6 s) et limité à ~2 flashs de forte luminance
+   pour rester sous le seuil de photosensibilité (WCAG 2.3.1 : pas plus de
+   3 flashs par seconde). Tout se réduit à l'état "invisible / net" en
+   prefers-reduced-motion. */
+@keyframes wora-glitch-clear {
+  0%, 78% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes wora-glitch-strobe {
+  0%, 17% { opacity: 1; background-color: #e8e8e8; }
+  18%, 34% { opacity: 1; background-color: #0c0c0c; }
+  35%, 54% { opacity: 0.9; background-color: #dcdcdc; }
+  55%, 72% { opacity: 0.72; background-color: #0c0c0c; }
+  100% { opacity: 0; background-color: #0c0c0c; }
+}
+
+@keyframes wora-glitch-slice {
+  0%   { clip-path: inset(2% 0 82% 0); transform: translateX(-7%); opacity: 0.85; }
+  22%  { clip-path: inset(24% 0 58% 0); transform: translateX(6%); }
+  44%  { clip-path: inset(56% 0 22% 0); transform: translateX(-4%); }
+  60%  { clip-path: inset(72% 0 9% 0); transform: translateX(8%); }
+  78%  { clip-path: inset(36% 0 46% 0); transform: translateX(-5%); }
+  100% { clip-path: inset(0 0 100% 0); transform: translateX(0); opacity: 0; }
+}
+
+@keyframes wora-glitch-slice-alt {
+  0%   { clip-path: inset(48% 0 38% 0); transform: translateX(9%); opacity: 0.7; }
+  26%  { clip-path: inset(12% 0 78% 0); transform: translateX(-11%); }
+  52%  { clip-path: inset(76% 0 11% 0); transform: translateX(6%); }
+  74%  { clip-path: inset(32% 0 54% 0); transform: translateX(-8%); }
+  100% { clip-path: inset(50% 0 50% 0); transform: translateX(0); opacity: 0; }
+}
+
+@keyframes wora-scanroll {
+  from { background-position: 0 0; }
+  to { background-position: 0 -180px; }
+}
+
+@keyframes wora-noise-flicker {
+  0% { opacity: 0.3; transform: translate(0, 0); }
+  33% { opacity: 0.12; transform: translate(-2%, 1%); }
+  66% { opacity: 0.42; transform: translate(2%, -1%); }
+  100% { opacity: 0.18; transform: translate(-1%, 0); }
+}
+
+/* Entrée du panneau : saccadée puis calage net (steps → ease-out en fin). */
+@keyframes wora-glitch-in {
+  0%   { opacity: 0; transform: translate(-14px, 6px) skewX(9deg) scale(1.05); animation-timing-function: steps(1, end); }
+  18%  { opacity: 1; transform: translate(11px, -5px) skewX(-7deg) scale(1.03); animation-timing-function: steps(1, end); }
+  33%  { transform: translate(-7px, 3px) skewX(4deg) scale(1.02); animation-timing-function: steps(1, end); }
+  48%  { transform: translate(5px, -2px) skewX(-3deg) scale(1.01); animation-timing-function: steps(1, end); }
+  66%  { transform: translate(-3px, 1px) skewX(1deg); animation-timing-function: steps(1, end); }
+  82%  { transform: translate(2px, 0) skewX(-1deg); animation-timing-function: ease-out; }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes wora-desaturate {
+  0% { filter: grayscale(1) contrast(1.7) brightness(1.12); }
+  55% { filter: grayscale(1) contrast(1.35) brightness(1.04); }
+  100% { filter: grayscale(0) contrast(1) brightness(1); }
+}
