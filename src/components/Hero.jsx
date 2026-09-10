@@ -16,7 +16,7 @@ export default function Hero() {
       </h1>
 
       <p className="mt-6 max-w-md font-body text-lg text-ink/70">
-        Pitié Adana vient vendredi pitié pitié pitié je suis à genoux
+        Placeholder présentation du groupe, de l'univers / la musique
       </p>
 
       <p className="mt-6 max-w-xl font-mono text-[0.7rem] uppercase leading-relaxed tracking-[0.16em] text-slate/80">
